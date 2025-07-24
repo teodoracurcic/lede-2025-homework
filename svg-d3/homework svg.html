@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+
+    <!-- some basic stuff  -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serbia: The gap between wages and needs</title>
+
+    <!-- 
+      add your stylesheet 
+      base.css loads the basic stuff
+      you can tweak your css in custom.css
+      WARNING: the order of the stylesheets matters
+    -->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="custom.css">
+
+    <!-- Step 2. add your d3 script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
+  </head>
+  <body>
+    <h1>Serbia: The gap between <span style="color:#756bb1;font-weight: bold;">wages</span> and <span style="color:#bcbddc;font-weight: bold;">needs</span></h1>
+    <p>Despite increases over time, Serbia’s minimum wage still falls short of covering basic living expenses. The chart compares its value to the average 
+      consumer basket across three years. </p>
+      <p>Legend: <span style="color:#756bb1; font-weight: bold;">minimum wage (no taxes)</span>, 
+      <span style="color:#bcbddc; font-weight: bold;">average consumer basket</span> </p>
+    <div id="my-svg-chart"></div>
+
+
+    <!-- your JS code that uses d3 to manipulate data -->
+    <script>
+      
+      // Step 3. add data variables
+      const wage2019 = 259,
+            wage2024 = 473,
+            basket2019 = 675,
+            basket2024 = 1049;
+      
+      // Step 4. transform data into usable scales
+      const scaleRadius = d3.scaleSqrt().domain([0, basket2024]).range([0, 100]);
+
+      // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+      const myChart = d3.select('#my-svg-chart')
+        .append('svg')
+        .attr('width', 600)
+        .attr('height', 500)
+
+      // Step 6. create SVG elements binded with data
+      const squares = myChart
+        .selectAll('rect')
+        .data([basket2019, wage2019, basket2024, wage2024])
+        .join('rect');
+
+      // Step 7. position the SVG shapes at the right places
+      squares
+        .attr('width', d => scaleRadius(d) * 2)
+        .attr('height', d => scaleRadius(d) * 2)
+        .attr('x', function(d, i) {
+          const groupX = i < 2 ? 200 : 500; // razmak između grupa
+          const side = scaleRadius(d) * 2;
+          return groupX - side / 2;
+        })
+        .attr('y', function(d) {
+          const side = scaleRadius(d) * 2;
+          return 250 - side / 2;
+        });
+
+
+
+      // Step 8. color the SVG shapes using style attributes
+      squares
+        .style('fill', function(d,i) {
+          return i%2 == 0 ? '#bcbddc' : '#756bb1'
+        })
+
+      // Step 9. Add labels
+      myChart.append('text')
+        .attr('x', 200)
+        .attr('y', 150)
+        .text('2019')
+        .style('text-anchor','middle');
+
+      myChart.append('text')
+        .attr('x', 500)
+        .attr('y', 130)
+        .text('2024')
+        .style('text-anchor','middle');
+
+    </script>
+
+  </body>
+</html>
